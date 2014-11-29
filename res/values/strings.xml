@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MemoDb</string>
+
+    <string name="menuAdd">Add</string>
+    <string name="menuSeiri">Order</string>
+    
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+
+</resources>

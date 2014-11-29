@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    
+    <string name="menuAdd">追加</string>
+    <string name="menuSeiri">整理</string>
+    
+    <string name="save">保存する</string>
+    <string name="cancel">キャンセル</string>
+    <string name="delete">削除する</string>
+
+</resources>
