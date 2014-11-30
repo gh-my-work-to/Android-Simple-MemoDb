@@ -1,17 +1,21 @@
 package com.example.memodb;
 
-import com.example.memodb.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.memodb.AskDialog.AskDialogListener;
+
 public class EditActivity extends Activity
 {
+
+	private static final String TAG = "EditActivity";
+
 	public static final String NAME_DELETE = "delete-record";
 	public static final String NAME_POSITION = "item-position";
 
@@ -20,7 +24,7 @@ public class EditActivity extends Activity
 	private Button mBtnSave;
 	private Button mBtnCancel;
 	private Button mBtnDelete;
-	
+
 	private int mPosition;
 
 	@Override
@@ -32,7 +36,7 @@ public class EditActivity extends Activity
 		mEdt_id = (EditText) findViewById(R.id.edit_id);
 		mEdt_value = (EditText) findViewById(R.id.edit_value);
 
-		mBtnSave = (Button) findViewById(R.id.editSave);
+		mBtnSave = (Button) findViewById(R.id.editBtnSave);
 		mBtnSave.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -41,7 +45,7 @@ public class EditActivity extends Activity
 				doSave();
 			}
 		});
-		mBtnCancel = (Button) findViewById(R.id.editCacel);
+		mBtnCancel = (Button) findViewById(R.id.editBtnCacel);
 		mBtnCancel.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -50,7 +54,7 @@ public class EditActivity extends Activity
 				doCancel();
 			}
 		});
-		mBtnDelete = (Button) findViewById(R.id.editDelete);
+		mBtnDelete = (Button) findViewById(R.id.editBtnDelete);
 		mBtnDelete.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -59,7 +63,7 @@ public class EditActivity extends Activity
 				doDelete();
 			}
 		});
-		//////////////
+		///インテントからデータ取り出し///
 		if (getIntent() != null && getIntent().getExtras() != null)
 		{
 			Bundle bu = getIntent().getExtras();
@@ -68,7 +72,7 @@ public class EditActivity extends Activity
 
 			mEdt_id.setText(id + "");
 			mEdt_value.setText(value);
-			
+
 			mPosition = bu.getInt(NAME_POSITION);
 		}
 		else
@@ -107,6 +111,34 @@ public class EditActivity extends Activity
 	}
 
 	private void doDelete()
+	{
+		AskDialog dlg = new AskDialog(new AskDialogListener()
+		{
+			@Override
+			public void onClickYes()
+			{
+				doDeleteReally();
+				if (BuildConfig.DEBUG)
+				{
+					Log.v(TAG, "onClickYes");
+				}
+			}
+
+			@Override
+			public void onClickCancel()
+			{
+				if (BuildConfig.DEBUG)
+				{
+					Log.v(TAG, "onClickCancel");
+				}
+				return;
+			}
+		}, getApplicationContext().getResources().getString(R.string.askDelete));
+
+		dlg.show(getFragmentManager(), "ask");
+	}
+
+	private void doDeleteReally()
 	{
 		int id = 0;
 		try

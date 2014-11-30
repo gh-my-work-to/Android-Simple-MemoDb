@@ -1,7 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -10,42 +11,57 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
 
         <EditText
             android:id="@+id/edit_id"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="6"
             android:enabled="false"
             android:hint="id" />
+
+        <Button
+            android:id="@+id/editBtnCacel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@android:string/cancel" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5" >
 
         <EditText
             android:id="@+id/edit_value"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:hint="value" />
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/editSave"
-            android:layout_width="match_parent"
+            android:id="@+id/editBtnSave"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/save" />
 
         <Button
-            android:id="@+id/editCacel"
-            android:layout_width="match_parent"
+            android:id="@+id/editBtnDelete"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Cancel" />
+            android:layout_weight="1"
+            android:text="@string/delete" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/editDelete"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-		android:layout_alignParentBottom="true"
-
-        android:text="@string/delete" />
-
-</RelativeLayout>
+</LinearLayout>

@@ -20,7 +20,9 @@ public class DbManager extends SQLiteOpenHelper
 
 	private static final String TABLE_NAME = "tWord";
 	public static final String COL_ID = "word_id";
+	private static final int COL_ID_INDEX = 0;
 	public static final String COL_VALUE = "word";
+	private static final int COL_VALUE_INDEX = 1;
 
 	private static final String INIT_SQL = String.format(
 
@@ -30,9 +32,6 @@ public class DbManager extends SQLiteOpenHelper
 
 			, TABLE_NAME, COL_ID, COL_VALUE);
 
-	private int mIdx_COL_ID;
-	private int mIdx_COL_VALUE;
-	
 
 	public DbManager(Context context, String name, CursorFactory factory, int version)
 	{
@@ -44,27 +43,6 @@ public class DbManager extends SQLiteOpenHelper
 	{
 		super(context, DBNAME, null, DBVERSION);
 
-	}
-
-	public void initColIdx()
-	{
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor cs = db.query(TABLE_NAME, null, null, null, null, null, null);
-
-		while (cs.moveToNext())
-		{
-			mIdx_COL_ID = cs.getColumnIndex(COL_ID);
-			mIdx_COL_VALUE = cs.getColumnIndex(COL_VALUE);
-			break;
-		}
-		cs.close();
-		db.close();
-
-		if (BuildConfig.DEBUG)
-		{
-			Log.v(TAG, "mIdx_COL_ID:" + mIdx_COL_ID);
-			Log.v(TAG, "mIdx_COL_VALUE:" + mIdx_COL_VALUE);
-		}
 	}
 
 	@Override
@@ -85,16 +63,16 @@ public class DbManager extends SQLiteOpenHelper
 	 */
 	public ArrayList<RecordClass> getDatas()
 	{
+		//戻り値
 		ArrayList<RecordClass> ret = new ArrayList<RecordClass>();
 
 		SQLiteDatabase db = getReadableDatabase();
 		//DBの全データ取得
 		Cursor cs = db.query(TABLE_NAME, null, null, null, null, null, null);
-
 		while (cs.moveToNext())
 		{
-			int id = cs.getInt(mIdx_COL_ID);
-			String value = cs.getString(mIdx_COL_VALUE);
+			int id = cs.getInt(COL_ID_INDEX);
+			String value = cs.getString(COL_VALUE_INDEX);
 			//クラスに変換して戻り値に追加
 			RecordClass rc = new RecordClass(id, value);
 			ret.add(rc);
@@ -177,13 +155,20 @@ public class DbManager extends SQLiteOpenHelper
 		int newId = 1;
 		while (cs.moveToNext())
 		{
-			String oldValue = cs.getString(mIdx_COL_VALUE);
+			String oldValue = cs.getString(COL_VALUE_INDEX);
 
 			db.execSQL(String.format(
 					"INSERT INTO T_TMP (%s, %s) VALUES(%d, '%s')",
-					COL_ID, COL_VALUE, newId++, oldValue
+					COL_ID, COL_VALUE, newId, oldValue
 					));
+			if (BuildConfig.DEBUG)
+			{
+				Log.v(TAG, "newId:" + newId + " value:" + oldValue);
+			}
+			newId++;
 		}
+		cs.close();
+		
 		//drop
 		db.execSQL(String.format(
 				"DROP TABLE %s", TABLE_NAME));
@@ -192,8 +177,7 @@ public class DbManager extends SQLiteOpenHelper
 				"ALTER TABLE T_TMP RENAME TO %s",
 				TABLE_NAME));
 
-		cs.close();
 		db.close();
 	}
-	
+
 }

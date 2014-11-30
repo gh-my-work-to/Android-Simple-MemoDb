@@ -49,8 +49,6 @@ public class MainActivity extends Activity implements OnItemClickListener
 
 		//DB管理　取得
 		mDbm = new DbManager(getApplicationContext());
-		//colのインデックスを取得する
-		mDbm.initColIdx();
 
 		//DBからデータ取得
 		ArrayList<RecordClass> al = mDbm.getDatas();

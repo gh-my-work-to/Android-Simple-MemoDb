@@ -8,5 +8,6 @@
     <string name="save">保存する</string>
     <string name="cancel">キャンセル</string>
     <string name="delete">削除する</string>
+    <string name="askDelete">削除しますか？</string>
 
 </resources>

@@ -8,5 +8,6 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
-
+	<string name="askDelete">Delete this record?</string>
+    
 </resources>
