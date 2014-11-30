@@ -9,5 +9,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
 	<string name="askDelete">Delete this record?</string>
-    
+
+	<string name="menuUndo">Undo</string>
+	
 </resources>

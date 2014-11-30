@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -26,11 +29,15 @@ public class EditActivity extends Activity
 	private Button mBtnDelete;
 
 	private int mPosition;
+	private String mValueBuf;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		//ソフトキーボード出現抑制
+		getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
 		setContentView(R.layout.activity_edit);
 
 		mEdt_id = (EditText) findViewById(R.id.edit_id);
@@ -73,6 +80,7 @@ public class EditActivity extends Activity
 			mEdt_id.setText(id + "");
 			mEdt_value.setText(value);
 
+			mValueBuf = value;
 			mPosition = bu.getInt(NAME_POSITION);
 		}
 		else
@@ -110,6 +118,9 @@ public class EditActivity extends Activity
 		finish();
 	}
 
+	/**
+	 * レコードを削除するか尋ねるダイアログを表示する
+	 */
 	private void doDelete()
 	{
 		AskDialog dlg = new AskDialog(new AskDialogListener()
@@ -138,6 +149,9 @@ public class EditActivity extends Activity
 		dlg.show(getFragmentManager(), "ask");
 	}
 
+	/**
+	 * レコードを削除する
+	 */
 	private void doDeleteReally()
 	{
 		int id = 0;
@@ -157,6 +171,33 @@ public class EditActivity extends Activity
 
 		setResult(RESULT_OK, it);
 		finish();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.menu_edit, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		boolean ret = false;
+		int id = item.getItemId();
+
+		switch (id)
+		{
+		case R.id.menuUndo://編集の取り消しをする
+			//valueを復帰させる
+			mEdt_value.setText(mValueBuf);
+
+			ret = true;
+			break;
+		default:
+			ret = super.onOptionsItemSelected(item);
+		}
+		return ret;
 	}
 
 	@Override

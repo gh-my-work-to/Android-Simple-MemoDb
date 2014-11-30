@@ -9,5 +9,7 @@
     <string name="cancel">キャンセル</string>
     <string name="delete">削除する</string>
     <string name="askDelete">削除しますか？</string>
+    
+    <string name="menuUndo">元に戻す</string>
 
 </resources>

@@ -6,6 +6,7 @@ import com.example.memodb.BuildConfig;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -31,7 +32,6 @@ public class DbManager extends SQLiteOpenHelper
 					+ "%s TEXT NOT NULL)"
 
 			, TABLE_NAME, COL_ID, COL_VALUE);
-
 
 	public DbManager(Context context, String name, CursorFactory factory, int version)
 	{
@@ -144,40 +144,54 @@ public class DbManager extends SQLiteOpenHelper
 		SQLiteDatabase db = getWritableDatabase();
 		Cursor cs = db.query(TABLE_NAME, null, null, null, null, null, null);
 
-		//make tmpTable
-		db.execSQL("DROP TABLE IF EXISTS T_TMP");
-		db.execSQL(String.format(
-				"CREATE TABLE T_TMP ("
-						+ "%s INTEGER PRIMARY KEY NOT NULL, "
-						+ "%s TEXT NOT NULL)",
-				COL_ID, COL_VALUE));
-
-		int newId = 1;
-		while (cs.moveToNext())
+		//トランザクション開始
+		db.beginTransaction();
+		try
 		{
-			String oldValue = cs.getString(COL_VALUE_INDEX);
-
+			//make tmpTable
+			db.execSQL("DROP TABLE IF EXISTS T_TMP");
 			db.execSQL(String.format(
-					"INSERT INTO T_TMP (%s, %s) VALUES(%d, '%s')",
-					COL_ID, COL_VALUE, newId, oldValue
-					));
-			if (BuildConfig.DEBUG)
-			{
-				Log.v(TAG, "newId:" + newId + " value:" + oldValue);
-			}
-			newId++;
-		}
-		cs.close();
-		
-		//drop
-		db.execSQL(String.format(
-				"DROP TABLE %s", TABLE_NAME));
-		//alter
-		db.execSQL(String.format(
-				"ALTER TABLE T_TMP RENAME TO %s",
-				TABLE_NAME));
+					"CREATE TABLE T_TMP ("
+							+ "%s INTEGER PRIMARY KEY NOT NULL, "
+							+ "%s TEXT NOT NULL)",
+					COL_ID, COL_VALUE));
 
-		db.close();
+			int newId = 1;
+			while (cs.moveToNext())
+			{
+				String oldValue = cs.getString(COL_VALUE_INDEX);
+
+				db.execSQL(String.format(
+						"INSERT INTO T_TMP (%s, %s) VALUES(%d, '%s')",
+						COL_ID, COL_VALUE, newId, oldValue
+						));
+				if (BuildConfig.DEBUG)
+				{
+					Log.v(TAG, "newId:" + newId + " value:" + oldValue);
+				}
+				newId++;
+			}
+
+			//drop
+			db.execSQL(String.format(
+					"DROP TABLE %s", TABLE_NAME));
+			//alter
+			db.execSQL(String.format(
+					"ALTER TABLE T_TMP RENAME TO %s",
+					TABLE_NAME));
+			
+			db.setTransactionSuccessful();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			db.endTransaction();
+			db.close();
+			cs.close();
+		}
 	}
 
 }
